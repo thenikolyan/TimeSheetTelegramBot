@@ -96,3 +96,7 @@ async def sql_work_sum():
                         f"where current_date = date "
                         f"GROUP by (uid, date)) as all_time using (uid) "
                         f"where daily_work_rate < time and ;", con).to_dict('records'))
+
+
+async def sql_check_user(uid):
+    return (pd.read_sql(f'select true from worktime.users where uid={uid}', con).to_dict('records'))

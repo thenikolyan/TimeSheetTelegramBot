@@ -11,6 +11,7 @@ from emoji.core import emojize
 
 from create_bot import bot
 from data_base import postgresql
+
 from keyboards import kb_client
 
 
@@ -28,13 +29,13 @@ class Work(StatesGroup):
 
 
 async def welcome(message: types.Message):
+    await message.delete()
     message_text = text(emojize(f'Добро пожаловать, {message.from_user.username} :smirk:', language='alias'))
 
     await bot.send_message(
         message.from_user.id,
         message_text,
-        parse_mode=ParseMode.MARKDOWN,
-        #reply_markup=kb_client
+        parse_mode=ParseMode.MARKDOWN
     )
 
     await postgresql.sql_user_add({'uid': message.from_user.id,
@@ -45,18 +46,26 @@ async def welcome(message: types.Message):
 async def menu(message: types.Message):
 
     await message.delete()
-    menu_keyboards = types.InlineKeyboardMarkup(row_width=2)
-    button = []
-
-    for item in ['Meet', 'Work', 'Settings']:
-        button.append(types.InlineKeyboardButton(text=item, callback_data=item))
-
-    await bot.send_message(
+    check = await postgresql.sql_check_user(message.from_user.id)
+    if check == []:
+        await bot.send_message(
             message.from_user.id,
-            'What do you wish?',
-            parse_mode=ParseMode.MARKDOWN,
-            reply_markup=menu_keyboards.add(*button).add(types.InlineKeyboardButton(text='Cancel', callback_data='cancel'))
+            text(emojize(f'So... \nWho are u? :hushed: \nPlease, click this: /start', language='alias')),
+            parse_mode=ParseMode.MARKDOWN
         )
+    else:
+        menu_keyboards = types.InlineKeyboardMarkup(row_width=2)
+        button = []
+
+        for item in ['Meet', 'Work', 'Settings']:
+            button.append(types.InlineKeyboardButton(text=item, callback_data=item))
+
+        await bot.send_message(
+                message.from_user.id,
+                'What do you wish?',
+                parse_mode=ParseMode.MARKDOWN,
+                reply_markup=menu_keyboards.add(*button).add(types.InlineKeyboardButton(text='Cancel', callback_data='cancel'))
+            )
 
 
 async def menu_callback(callback: types.CallbackQuery):
