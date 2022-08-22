@@ -113,7 +113,7 @@ async def rename_category_2(callback: types.CallbackQuery, state: FSMContext):
     if callback.data != 'cancel':
         await bot.send_message(callback.from_user.id, 'Choose new name, please!')
         async with state.proxy() as data:
-            data['last_name'] = callback.data
+            data['last_name'] = callback.data.split('~')[1]
         await callback.answer()
 
         await NameSpace.next()
@@ -161,7 +161,7 @@ async def change_time_of_work_2(message: types.Message, state: FSMContext):
                 data['uid'] = message.from_user.id
 
             await postgresql.sql_change_time_of_work(data)
-
+            await state.finish()
             await bot.send_message(message.from_user.id, f"You've successfully changed the time on {message.text}!")
         except ValueError:
             await change_time_of_work(message, state)
@@ -174,7 +174,7 @@ async def change_time_of_work_2(message: types.Message, state: FSMContext):
                 data['uid'] = message.from_user.id
 
             await postgresql.sql_change_time_of_work(data)
-
+            await state.finish()
             await bot.send_message(message.from_user.id, f"You've successfully changed the time on {message.text}!")
         except ValueError:
             await change_time_of_work(message, state)
@@ -186,14 +186,13 @@ async def change_time_of_work_2(message: types.Message, state: FSMContext):
                 data['uid'] = message.from_user.id
 
             await postgresql.sql_change_time_of_work(data)
-
+            await state.finish()
             await bot.send_message(message.from_user.id, f"You've successfully changed the time on {message.text}!")
 
         except ValueError:
             await change_time_of_work(message, state)
     else:
         await change_time_of_work(message, state)
-
 
 
 async def cancel(callback: types.Message,  state: FSMContext):

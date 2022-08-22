@@ -10,7 +10,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from emoji.core import emojize
 
 from create_bot import bot
-from data_base import sqlite_db, postgresql
+from data_base import postgresql
 from keyboards import kb_client
 
 

@@ -2,9 +2,9 @@ import asyncio
 
 from aiogram.utils import executor
 from create_bot import dp
-from data_base import sqlite_db, postgresql
+from data_base import postgresql
 
-from handlers import clients, admins, others, categories
+from handlers import clients, others, categories
 from schedule_clients import schedule_run
 
 
@@ -15,7 +15,6 @@ async def on_startup(_):
 
 
 clients.register_handlers_clients(dp)
-admins.register_handlers_clients(dp)
 categories.register_handlers_clients(dp)
 others.register_handlers_clients(dp)
 
